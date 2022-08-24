@@ -820,7 +820,6 @@ class Query(Runner):
         # Mandatory to ensure it is always provided. This is especially important when this runner is used in a
         # composite context where there is no actual parameter source and the entire request structure must be provided
         # by the composite's parameter source.
-        print(params)
         index = mandatory(params, "index", self)
         body = mandatory(params, "body", self)
         size = params.get("results-per-page")
@@ -863,14 +862,13 @@ class Query(Runner):
                     pit_id = CompositeContext.get(pit_op)
                     body["pit"] = {"id": pit_id,
                                    "keep_alive": "1m"}
-                if local_pit_id:
+                if local_pit_id and not pit_op:
                     body["pit"] = {"id": local_pit_id,
                                    "keep_alive": "1m"}
-                print(body)
                 response = await self._raw_search(
                     opensearch, doc_type=None, index=index, body=body.copy(),
                     params=request_params, headers=headers)
-                parsed, last_sort = self._extractor(response, bool(pit_op), results.get("hits"))
+                parsed, last_sort = self._extractor(response, bool(pit_op) or bool(local_pit_id), results.get("hits"))
                 results["pages"] = page
                 results["weight"] = page
                 if results.get("hits") is None:
@@ -883,7 +881,7 @@ class Query(Runner):
                 if pit_op:
                     # per the documentation the response pit id is most up-to-date
                     CompositeContext.put(pit_op, parsed.get("pit_id"))
-                if local_pit_id:
+                if local_pit_id and not pit_op:
                     with open('pit.json', 'w') as f:
                         json.dump({"id": parsed.get("pit_id")}, f)
                 if results.get("hits") / size > page:
@@ -1902,19 +1900,18 @@ class DeletePointInTime(Runner):
         request_params = params.get("request-params", {})
         if pit_op is None and local_pit_id is None:
             await opensearch.delete_point_in_time(all="_all", params=request_params)
-        elif local_pit_id is not None:
-            print(local_pit_id)
-            body = {
-                "pit_id": [local_pit_id]
-            }
-            await opensearch.delete_point_in_time(body=body, params=request_params, headers=None)
-        else:
+        elif pit_op is not None:
             pit_id = CompositeContext.get(pit_op)
             body = {
                 "pit_id": [pit_id]
             }
             await opensearch.delete_point_in_time(body=body, params=request_params, headers=None)
             CompositeContext.remove(pit_op)
+        else:
+            body = {
+                "pit_id": [local_pit_id]
+            }
+            await opensearch.delete_point_in_time(body=body, params=request_params, headers=None)
         file.close()
         with open('pit.json', 'w') as f:
             json.dump({"id": None}, f)

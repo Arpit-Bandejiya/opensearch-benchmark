@@ -882,8 +882,7 @@ class Query(Runner):
                     # per the documentation the response pit id is most up-to-date
                     CompositeContext.put(pit_op, parsed.get("pit_id"))
                 if local_pit_id and not pit_op:
-                    with open('pit.json', 'w') as f:
-                        json.dump({"id": parsed.get("pit_id")}, f)
+                    local_pit_id = parsed.get("pit_id")
                 if results.get("hits") / size > page:
                     body["search_after"] = last_sort
                 else:
@@ -891,7 +890,8 @@ class Query(Runner):
                     for item in ["pit", "search_after"]:
                         body.pop(item, None)
                     break
-
+            with open('pit.json', 'w') as f:
+                json.dump({"id": parsed.get("pit_id")}, f)
             return results
 
         async def _request_body_query(opensearch, params):

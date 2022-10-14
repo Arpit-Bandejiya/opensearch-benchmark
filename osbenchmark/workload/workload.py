@@ -581,9 +581,10 @@ class OperationType(Enum):
     DeleteAsyncSearch = 11
     PaginatedSearch = 12
     ScrollSearch = 13
-    CreatePointInTime = 14
-    DeletePointInTime = 15
-    ListAllPointInTime = 16
+    PointInTimeSearch = 14
+    CreatePointInTime = 15
+    DeletePointInTime = 16
+    ListAllPointInTime = 17
 
     # administrative actions
     ForceMerge = 1001
@@ -640,6 +641,8 @@ class OperationType(Enum):
             return OperationType.ScrollSearch
         elif v == "paginated-search":
             return OperationType.PaginatedSearch
+        elif v == "point-in-time-search":
+            return OperationType.PointInTimeSearch
         elif v == "cluster-health":
             return OperationType.ClusterHealth
         elif v == "bulk":

@@ -132,26 +132,26 @@ def register_runner(operation_type, runner, **kwargs):
     if getattr(runner, "multi_cluster", False):
         if "__aenter__" in dir(runner) and "__aexit__" in dir(runner):
             if logger.isEnabledFor(logging.DEBUG):
-                logger.debug("Registering runner object [%s] for [%s].", str(runner), str(operation_type))
+                print("Registering runner object [%s] for [%s].", str(runner), str(operation_type))
             cluster_aware_runner = _multi_cluster_runner(runner, str(runner), context_manager_enabled=True)
         else:
             if logger.isEnabledFor(logging.DEBUG):
-                logger.debug("Registering context-manager capable runner object [%s] for [%s].", str(runner),
+                print("Registering context-manager capable runner object [%s] for [%s].", str(runner),
                              str(operation_type))
             cluster_aware_runner = _multi_cluster_runner(runner, str(runner))
     # we'd rather use callable() but this will erroneously also classify a class as callable...
     elif isinstance(runner, types.FunctionType):
         if logger.isEnabledFor(logging.DEBUG):
-            logger.debug("Registering runner function [%s] for [%s].", str(runner), str(operation_type))
+            print("Registering runner function [%s] for [%s].", str(runner), str(operation_type))
         cluster_aware_runner = _single_cluster_runner(runner, runner.__name__)
     elif "__aenter__" in dir(runner) and "__aexit__" in dir(runner):
         if logger.isEnabledFor(logging.DEBUG):
-            logger.debug("Registering context-manager capable runner object [%s] for [%s].", str(runner),
+            print("Registering context-manager capable runner object [%s] for [%s].", str(runner),
                          str(operation_type))
         cluster_aware_runner = _single_cluster_runner(runner, str(runner), context_manager_enabled=True)
     else:
         if logger.isEnabledFor(logging.DEBUG):
-            logger.debug("Registering runner object [%s] for [%s].", str(runner), str(operation_type))
+            print("Registering runner object [%s] for [%s].", str(runner), str(operation_type))
         cluster_aware_runner = _single_cluster_runner(runner, str(runner))
 
     __RUNNERS[operation_type] = _with_completion(_with_assertions(cluster_aware_runner))

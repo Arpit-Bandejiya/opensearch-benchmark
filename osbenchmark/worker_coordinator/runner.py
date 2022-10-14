@@ -105,6 +105,7 @@ def register_default_runners():
 def runner_for(operation_type):
     try:
         print("This is the operation type", operation_type)
+        raise exceptions.BenchmarkError("No runner available for operation type [%s]" % operation_type)
         return __RUNNERS[operation_type]
     except KeyError:
         raise exceptions.BenchmarkError("No runner available for operation type [%s]" % operation_type)

@@ -1116,6 +1116,7 @@ class ClusterHealth(Runner):
     """
 
     async def __call__(self, opensearch, params):
+        print("Cluster health check")
         @total_ordering
         class ClusterHealthStatus(Enum):
             UNKNOWN = 0

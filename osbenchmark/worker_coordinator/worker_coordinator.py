@@ -1027,6 +1027,7 @@ class Worker(actor.BenchmarkActor):
     @actor.no_retry("worker")  # pylint: disable=no-value-for-parameter
     def receiveMsg_StartWorker(self, msg, sender):
         self.logger.info("Worker[%d] is about to start.", msg.worker_id)
+        self.logger.info("We are here!")
         self.master = sender
         self.worker_id = msg.worker_id
         self.config = load_local_config(msg.config)

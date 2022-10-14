@@ -691,7 +691,7 @@ class WorkerCoordinator:
     def joinpoint_reached(self, worker_id, worker_local_timestamp, task_allocations):
         self.currently_completed += 1
         self.workers_completed_current_step[worker_id] = (worker_local_timestamp, time.perf_counter())
-        self.logger.info("[%d/%d] workers reached join point [%d/%d].",
+        self.logger.info("[%d/%d] workers reached join point this works!! [%d/%d].",
                          self.currently_completed, len(self.workers), self.current_step + 1, self.number_of_steps)
         if self.currently_completed == len(self.workers):
             self.logger.info("All workers completed their tasks until join point [%d/%d].", self.current_step + 1, self.number_of_steps)

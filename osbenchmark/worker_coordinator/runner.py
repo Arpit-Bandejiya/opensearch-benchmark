@@ -49,6 +49,7 @@ __RUNNERS = {}
 
 
 def register_default_runners():
+    print("WE are registering the default runners here")
     register_runner(workload.OperationType.Bulk, BulkIndex(), async_runner=True)
     register_runner(workload.OperationType.ForceMerge, ForceMerge(), async_runner=True)
     register_runner(workload.OperationType.IndexStats, Retry(IndicesStats()), async_runner=True)

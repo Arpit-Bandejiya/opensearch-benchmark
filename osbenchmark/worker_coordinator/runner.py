@@ -120,6 +120,7 @@ def enable_assertions(enabled):
 
 def register_runner(operation_type, runner, **kwargs):
     logger = logging.getLogger(__name__)
+    logger.setLevel('DEBUG')
     async_runner = kwargs.get("async_runner", False)
     if isinstance(operation_type, workload.OperationType):
         operation_type = operation_type.to_hyphenated_string()
